@@ -1,19 +1,172 @@
 {
   "type": "object",
-  "title": "extractor configuration",
+  "title": "Dynamics 365 Business Central Writer Configuration",
   "required": [
-    "print_hello"
+    "connection"
   ],
   "properties": {
-    "print_hello": {
-      "type": "boolean",
-      "title": "Print Hello",
+    "connection": {
+      "type": "object",
+      "title": "Connection",
+      "required": [
+        "tenant_id"
+      ],
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "title": "Tenant ID",
+          "description": "Can be found in https://businesscentral.dynamics.com/__TENANT_ID__/Production",
+          "propertyOrder": 1
+        },
+        "environment": {
+          "type": "string",
+          "enum": [],
+          "default": "",
+          "format": "select",
+          "title": "Environment",
+          "description": "Business Central environment name (e.g. Production, Sandbox)",
+          "options": {
+            "async": {
+              "label": "Load environments",
+              "action": "list_environments"
+            }
+          },
+          "propertyOrder": 2
+        },
+        "company_id": {
+          "type": "string",
+          "enum": [],
+          "default": "",
+          "format": "select",
+          "title": "Company ID",
+          "description": "GUID of the company to write data to",
+          "options": {
+            "async": {
+              "label": "Load companies",
+              "action": "list_companies"
+            }
+          },
+          "propertyOrder": 3
+        },
+        "test_connection": {
+          "type": "button",
+          "format": "test-connection",
+          "propertyOrder": 4
+        }
+      },
       "propertyOrder": 1
+    },
+    "endpoint": {
+      "type": "string",
+      "title": "Endpoint",
+      "format": "select",
+      "enum": [],
+      "description": "Business Central API endpoint to write to (e.g. customers, vendors)",
+      "options": {
+        "async": {
+          "label": "Re-load endpoints",
+          "action": "list_endpoints"
+        }
+      },
+      "propertyOrder": 2
+    },
+    "load_fields": {
+      "type": "button",
+      "title": "Load Fields",
+      "options": {
+        "async": {
+          "label": "Load fields",
+          "action": "load_entity_fields",
+          "autoload": ["endpoint"],
+          "cache": false
+        }
+      },
+      "propertyOrder": 3
+    },
+    "write_mode": {
+      "type": "string",
+      "format": "select",
+      "title": "Write Mode",
+      "description": "Create: insert new records. Update: modify existing records by key.",
+      "default": "create",
+      "enum": ["create", "update"],
+      "options": {
+        "enum_titles": ["Create", "Update"]
+      },
+      "propertyOrder": 4
+    },
+    "key_field": {
+      "type": "string",
+      "title": "Key Field",
+      "format": "select",
+      "enum": [],
+      "description": "Business Central field used as record identifier for updates (e.g. id, number)",
+      "options": {
+        "dependencies": {
+          "write_mode": "update"
+        },
+        "enumSource": [
+          {
+            "source": "_metadata_.api_fields",
+            "value": "{{item.field_name}}",
+            "title": "{{item.label}}"
+          }
+        ]
+      },
+      "propertyOrder": 5
+    },
+    "field_mapping": {
+      "type": "array",
+      "title": "Field Mapping",
+      "format": "table",
+      "description": "Map input table columns to Business Central fields",
+      "items": {
+        "type": "object",
+        "properties": {
+          "source_column": {
+            "type": "string",
+            "title": "Source Column",
+            "format": "select",
+            "enum": [],
+            "options": {
+              "enumSource": "columns"
+            }
+          },
+          "destination_field": {
+            "type": "string",
+            "title": "Destination Field",
+            "format": "select",
+            "enum": [],
+            "options": {
+              "enumSource": [
+                {
+                  "source": "_metadata_.api_fields",
+                  "value": "{{item.field_name}}",
+                  "title": "{{item.label}}"
+                }
+              ]
+            }
+          }
+        },
+        "required": ["source_column", "destination_field"]
+      },
+      "propertyOrder": 6
+    },
+    "continue_on_error": {
+      "type": "boolean",
+      "title": "Continue on Error",
+      "format": "checkbox",
+      "description": "When checked, failed records are written to 'failed_records.csv' instead of failing the job.",
+      "default": false,
+      "propertyOrder": 7
     },
     "debug": {
       "type": "boolean",
-      "title": "Debug",
-      "propertyOrder": 2
+      "title": "Debug Mode",
+      "format": "checkbox",
+      "description": "Enable debug logging for troubleshooting",
+      "default": false,
+      "propertyOrder": 8
     }
   }
 }
