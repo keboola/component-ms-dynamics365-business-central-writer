@@ -3,9 +3,9 @@ from unittest.mock import MagicMock
 
 from keboola.component.exceptions import UserException
 
-from configuration import Configuration, Connection, FieldMapping, WriteMode
+from configuration import Configuration, WriteMode
 from dynamics_client import DynamicsClientError
-from writer import BusinessCentralWriter, WriteResult, _unflatten_record
+from writer import BusinessCentralWriter, _unflatten_record
 
 
 class TestConfiguration(unittest.TestCase):
