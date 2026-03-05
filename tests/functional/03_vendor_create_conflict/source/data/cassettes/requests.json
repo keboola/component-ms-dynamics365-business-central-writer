@@ -1,0 +1,45 @@
+{
+  "_metadata": {
+    "freeze_time": "2026-03-05T16:25:21",
+    "keboola_vcr_version": "0.1.5",
+    "recorded_at": "2026-03-05T15:25:22.848949+00:00"
+  },
+  "interactions": [
+    {
+      "request": {
+        "body": "{\"number\": \"V001\", \"displayName\": \"Conflicting Vendor Name\"}",
+        "headers": {
+          "Accept": [
+            "application/json"
+          ],
+          "Content-Length": [
+            "60"
+          ],
+          "Content-Type": [
+            "application/json"
+          ]
+        },
+        "method": "POST",
+        "uri": "https://api.businesscentral.dynamics.com/v2.0/9b85ee6f-4fb0-4a46-8cb7-4dcc6b262a89/Production/api/v2.0/companies(7ebcd376-7a01-f111-a1fa-6045bdfd931c)/vendors"
+      },
+      "response": {
+        "body": {
+          "string": "{\"error\": {\"code\": \"REDACTED\", \"message\": \"The record in table Vendor already exists. Identification fields and values: No.='V001'  CorrelationId:  8e399cee-6be6-487f-883f-084d59a0c58c.\"}}"
+        },
+        "headers": {
+          "Content-Type": [
+            "application/json"
+          ],
+          "content-length": [
+            "208"
+          ]
+        },
+        "status": {
+          "code": 400,
+          "message": "Bad Request"
+        }
+      }
+    }
+  ],
+  "version": 1
+}

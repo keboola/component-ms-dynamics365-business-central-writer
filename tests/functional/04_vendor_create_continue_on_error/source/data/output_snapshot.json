@@ -1,0 +1,23 @@
+{
+  "files": {},
+  "hash_algorithm": "sha256",
+  "tables": {
+    "failed_records.csv": {
+      "columns": [
+        "number",
+        "displayName",
+        "error_message"
+      ],
+      "hash": "sha256:83e5f0fb87fa06b8914d595f3b3adf7f7988fbb70957fb988e1eaa50a4f7e8aa",
+      "row_count": 2,
+      "size_bytes": 229
+    },
+    "failed_records.csv.manifest": {
+      "columns": null,
+      "hash": "sha256:f62677061089df3a154cd8adafc141a1c13873c60c0b8f7a0213912a9a0f003c",
+      "row_count": null,
+      "size_bytes": 117
+    }
+  },
+  "version": "1.0"
+}

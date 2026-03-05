@@ -1,0 +1,40 @@
+{
+  "parameters": {
+    "connection": {
+      "tenant_id": "9b85ee6f-4fb0-4a46-8cb7-4dcc6b262a89",
+      "environment": "Production",
+      "company_id": "7ebcd376-7a01-f111-a1fa-6045bdfd931c"
+    },
+    "endpoint": "vendors",
+    "write_mode": "create",
+    "continue_on_error": true,
+    "field_mapping": [
+      {
+        "source_column": "Number",
+        "destination_field": "number"
+      },
+      {
+        "source_column": "Name",
+        "destination_field": "displayName"
+      }
+    ]
+  },
+  "authorization": {
+    "oauth_api": {
+      "credentials": {
+        "appKey": "DUMMY_CLIENT_ID",
+        "#appSecret": "DUMMY_CLIENT_SECRET",
+        "#data": "{\"access_token\": \"DUMMY_ACCESS_TOKEN\", \"refresh_token\": \"DUMMY_REFRESH_TOKEN\"}"
+      }
+    }
+  },
+  "storage": {
+    "input": {
+      "tables": [
+        {
+          "destination": "vendors_continue_on_error.csv"
+        }
+      ]
+    }
+  }
+}
