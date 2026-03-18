@@ -2,8 +2,6 @@ import logging
 import time
 from dataclasses import dataclass, field
 
-from keboola.component.exceptions import UserException
-
 from configuration import WriteMode
 from dynamics_client import DynamicsClient, DynamicsClientError
 
@@ -44,19 +42,10 @@ class BusinessCentralWriter:
         for i, record in enumerate(records):
             result.total_processed += 1
 
-            try:
-                if self.write_mode == WriteMode.create:
-                    self._create_one(record, result)
-                else:
-                    self._update_one(record, result)
-            except UserException as e:
-                # Fatal errors (auth failure, network error) — stop immediately
-                logging.error("Fatal error on record %d, aborting: %s", i + 1, e)
-                remaining = records[i + 1 :]
-                result.total_processed += len(remaining)
-                result.failed += len(remaining)
-                result.errors.extend({"record": r, "error": str(e)} for r in remaining)
-                break
+            if self.write_mode == WriteMode.create:
+                self._create_one(record, result)
+            else:
+                self._update_one(record, result)
 
             # Stop on first failure unless continue_on_error is set
             if result.failed > 0 and not self.continue_on_error:
