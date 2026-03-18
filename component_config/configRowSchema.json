@@ -1,1 +1,134 @@
-{}
+{
+  "type": "object",
+  "title": "Dynamics 365 Business Central Writer Configuration",
+  "required": [],
+  "properties": {
+    "endpoint": {
+      "type": "string",
+      "title": "Endpoint",
+      "format": "select",
+      "enum": [],
+      "description": "Business Central API endpoint to write to (e.g. customers, vendors)",
+      "options": {
+        "async": {
+          "label": "Re-load endpoints",
+          "action": "list_endpoints"
+        }
+      },
+      "propertyOrder": 2
+    },
+    "write_mode": {
+      "type": "string",
+      "format": "select",
+      "title": "Write Mode",
+      "description": "Create: insert new records. Update: modify existing records by key.",
+      "default": "create",
+      "enum": [
+        "create",
+        "update"
+      ],
+      "options": {
+        "enum_titles": [
+          "Create",
+          "Update"
+        ]
+      },
+      "propertyOrder": 3
+    },
+    "key_field": {
+      "type": "string",
+      "title": "Key Field",
+      "description": "Business Central field used as record identifier for updates (e.g. id, number)",
+      "options": {
+        "dependencies": {
+          "write_mode": "update"
+        }
+      },
+      "propertyOrder": 4
+    },
+    "field_mapping": {
+      "type": "array",
+      "title": "Field Mapping",
+      "format": "table",
+      "description": "Map input table columns to Business Central fields. Use 'Re-load mapping' to add missing columns - existing rows are preserved.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "source_column": {
+            "type": "string",
+            "title": "Source Column",
+            "options": {
+              "readOnly": true
+            }
+          },
+          "destination_field": {
+            "type": "string",
+            "title": "Destination Field",
+            "format": "select",
+            "watch": {
+              "api_fields": "_metadata_.api_fields"
+            },
+            "enumSource": [
+              {
+                "source": "api_fields",
+                "value": "{{item.field_name}}",
+                "title": "{{item.label}}"
+              }
+            ],
+            "options": {
+              "tags": true
+            }
+          }
+        },
+        "required": [
+          "source_column",
+          "destination_field"
+        ]
+      },
+      "propertyOrder": 5
+    },
+    "load_mapping": {
+      "type": "button",
+      "format": "sync-action",
+      "title": "Re-load Mapping",
+      "options": {
+        "async": {
+          "label": "Re-load mapping",
+          "action": "load_field_mapping",
+          "autoload": [
+            "endpoint"
+          ],
+          "cache": false
+        }
+      },
+      "propertyOrder": 6
+    },
+    "continue_on_error": {
+      "type": "boolean",
+      "title": "Continue on Error",
+      "format": "checkbox",
+      "description": "When checked, failed records are written to 'failed_records.csv' instead of failing the job.",
+      "default": false,
+      "propertyOrder": 7
+    },
+    "debug": {
+      "type": "boolean",
+      "title": "Debug Mode",
+      "format": "checkbox",
+      "description": "Enable debug logging for troubleshooting",
+      "default": false,
+      "propertyOrder": 8
+    },
+    "_metadata_": {
+      "type": "object",
+      "options": {
+        "hidden": true
+      },
+      "properties": {
+        "api_fields": {
+          "type": "array"
+        }
+      }
+    }
+  }
+}

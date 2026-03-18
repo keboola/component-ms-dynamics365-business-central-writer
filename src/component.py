@@ -186,20 +186,85 @@ class Component(ComponentBase):
 
         return [SelectElement(value=item["name"], label=item.get("label") or item["name"]) for item in endpoints]
 
-    @sync_action("load_entity_fields")
-    def load_entity_fields(self):
-        """Load writable fields for the selected endpoint (used for field_mapping and key_field dropdowns)."""
+    @sync_action("load_field_mapping")
+    def load_field_mapping(self) -> dict:
+        """Auto-populate field_mapping by matching input table columns to API field names."""
         endpoint = self.configuration.parameters.get("endpoint")
         if not endpoint:
-            return {"type": "data", "data": {"api_fields": []}}
+            raise UserException("Please select an endpoint first.")
+
+        input_mappings = self.configuration.tables_input_mapping
+        if len(input_mappings) != 1:
+            raise UserException(f"Exactly one input table must be configured. Found: {len(input_mappings)}")
+
+        table_mapping = input_mappings[0]
+        columns = (
+            table_mapping.columns if table_mapping.columns else self._get_columns_from_manifest(table_mapping.source)
+        )
 
         try:
             api_fields = self.client.get_writable_fields(endpoint)
         except DynamicsClientError as exc:
             raise self._wrap_client_error(exc)
 
+        writable_field_names = [f["field_name"] for f in api_fields]
+        existing = {fm.source_column: fm.destination_field for fm in self.config.field_mapping}
+
+        field_mapping = []
+        for col in columns:
+            if col in existing:
+                destination = existing[col]
+            else:
+                destination = self._fuzzy_match(col, writable_field_names)
+            field_mapping.append({"source_column": col, "destination_field": destination})
+
         self._sync_tokens_if_needed()
-        return {"type": "data", "data": {"api_fields": api_fields}}
+        return {
+            "type": "data",
+            "data": {
+                "connection": {
+                    "tenant_id": self.config.connection.tenant_id,
+                    "environment": self.config.connection.environment,
+                    "company_id": self.config.connection.company_id,
+                },
+                "endpoint": endpoint,
+                "write_mode": self.config.write_mode.value,
+                "key_field": self.config.key_field,
+                "field_mapping": field_mapping,
+                "continue_on_error": self.config.continue_on_error,
+                "debug": self.config.debug,
+                "_metadata_": {"api_fields": api_fields},
+            },
+        }
+
+    def _get_columns_from_manifest(self, source_table: str) -> list[str]:
+        """Get column names from input table manifest."""
+        input_tables = self.get_input_tables_definitions()
+        for table in input_tables:
+            if table.name == source_table or source_table.endswith(table.name):
+                return list(table.columns) if table.columns else []
+        raise UserException(
+            f"Could not determine columns for table '{source_table}'. "
+            "Please configure explicit columns in the input mapping."
+        )
+
+    @staticmethod
+    def _fuzzy_match(column: str, field_names: list[str]) -> str:
+        """Find the best matching API field name for a column name."""
+        if column in field_names:
+            return column
+
+        col_lower = column.lower()
+        for field in field_names:
+            if field.lower() == col_lower:
+                return field
+
+        col_norm = col_lower.replace("_", "").replace(" ", "")
+        for field in field_names:
+            if field.lower().replace("_", "").replace(" ", "") == col_norm:
+                return field
+
+        return ""
 
     @staticmethod
     def _wrap_client_error(error: DynamicsClientError) -> UserException:
