@@ -34,7 +34,7 @@ class Component(ComponentBase):
 
         input_tables = self.get_input_tables_definitions()
         if len(input_tables) != 1:
-            raise UserException(f"Exactly one table must be configured in input mapping")
+            raise UserException("Exactly one table must be configured in input mapping")
         input_table = input_tables[0]
 
         # Build column mapping from field_mapping config
@@ -194,7 +194,7 @@ class Component(ComponentBase):
 
         input_mappings = self.configuration.tables_input_mapping
         if len(input_mappings) != 1:
-            raise UserException(f"Exactly one input table must be configured. Found: {len(input_mappings)}")
+            raise UserException("Exactly one table must be configured in input mapping")
 
         table_mapping = input_mappings[0]
         columns = (
