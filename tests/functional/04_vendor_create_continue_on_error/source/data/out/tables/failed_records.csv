@@ -1,2 +1,0 @@
-number,displayName,error_message
-V001,VCR Conflict Existing Vendor,Invalid request: The record in table Vendor already exists. Identification fields and values: No.='V001'  CorrelationId:  8ded8497-1e20-4152-ae78-b5bf302c9105.

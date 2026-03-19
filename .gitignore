@@ -10,3 +10,6 @@ venv
 
 # kbc datafolder
 /data
+
+tests/functional/*/source/data/out/
+tests/functional/*/source/data/in/

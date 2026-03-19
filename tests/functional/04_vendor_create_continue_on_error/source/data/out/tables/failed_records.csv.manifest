@@ -1,7 +1,0 @@
-{
-  "write_always": false,
-  "delimiter": ",",
-  "enclosure": "\"",
-  "manifest_type": "out",
-  "has_header": true
-}
