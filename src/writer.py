@@ -2,6 +2,8 @@ import logging
 import time
 from dataclasses import dataclass, field
 
+from keboola.component.exceptions import UserException
+
 from configuration import WriteMode
 from dynamics_client import DynamicsClient, DynamicsClientError
 
@@ -100,6 +102,11 @@ def _unflatten_record(record: dict) -> dict:
         for part in parts[:-1]:
             if part not in current:
                 current[part] = {}
+            elif not isinstance(current[part], dict):
+                raise UserException(
+                    f"Field mapping conflict: '{part}' is mapped both as a scalar value and as a "
+                    f"nested object (via dot-notation key '{key}'). Remove one of the conflicting mappings."
+                )
             current = current[part]
 
         current[parts[-1]] = value
