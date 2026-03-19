@@ -32,10 +32,9 @@ class Component(ComponentBase):
     def run(self) -> None:
         self.config.validate_for_run()
 
-        # Get first input table
         input_tables = self.get_input_tables_definitions()
-        if not input_tables:
-            raise UserException("No input table found. Please map an input table in the configuration.")
+        if len(input_tables) != 1:
+            raise UserException(f"Exactly one table must be configured in input mapping")
         input_table = input_tables[0]
 
         # Build column mapping from field_mapping config
