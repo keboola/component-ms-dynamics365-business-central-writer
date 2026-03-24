@@ -21,7 +21,7 @@ dev = [
 
 [tool.ruff]
 line-length = 120
-exclude = ["__pycache__", ".git", ".venv", "venv"]
+target-version = "py313"
 
 [tool.ruff.lint]
-select = ["E", "F", "W"]
+select = ["E", "F", "W", "I", "UP"]

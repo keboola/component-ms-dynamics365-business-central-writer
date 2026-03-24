@@ -42,7 +42,7 @@ class Component(ComponentBase):
 
         # Read CSV, validate columns, apply mapping
         records = []
-        with open(input_table.full_path, "r", encoding="utf-8") as f:
+        with open(input_table.full_path, encoding="utf-8") as f:
             reader = csv.DictReader(f)
             csv_columns = reader.fieldnames or []
 
