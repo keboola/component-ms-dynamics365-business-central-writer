@@ -63,8 +63,13 @@ jobs:
       - name: Set image tag
         id: tag
         run: |
-          TAG="${GITHUB_REF##*/}"
-          IS_SEMANTIC_TAG=$(echo "$TAG" | grep -q '^v\?[0-9]\+\.[0-9]\+\.[0-9]\+$' && echo true || echo false)
+          REF="${GITHUB_REF##*/}"
+          if [ "${{ github.ref_type }}" = "tag" ]; then
+            TAG="$REF"
+          else
+            TAG="$REF-${{ github.run_number }}"
+          fi
+          IS_SEMANTIC_TAG=$(echo "$REF" | grep -q '^[0-9]\+\.[0-9]\+\.[0-9]\+$' && echo true || echo false)
           echo "is_semantic_tag=$IS_SEMANTIC_TAG" | tee -a $GITHUB_OUTPUT
           echo "app_image_tag=$TAG" | tee -a $GITHUB_OUTPUT
 
@@ -114,22 +119,17 @@ jobs:
       - push_event_info
       - build
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ env.KBC_DEVELOPERPORTAL_APP }}
-          path: /tmp
+      - name: Build test image
+        run: docker build --target test -t ${{ env.KBC_DEVELOPERPORTAL_APP }}:test .
 
-      - name: Load Image & Run Tests
-        run: |
-          docker load --input /tmp/${{ env.KBC_DEVELOPERPORTAL_APP }}.tar
-          docker image ls -a
-          docker run ${{ env.KBC_DEVELOPERPORTAL_APP }}:latest flake8 . --config=flake8.cfg
-          echo "Running unit-tests..."
-          docker run ${{ env.KBC_DEVELOPERPORTAL_APP }}:latest python -m unittest discover
+      - name: Run Tests
+        run: docker run ${{ env.KBC_DEVELOPERPORTAL_APP }}:test
 
   tests-kbc:
     name: Run KBC Tests

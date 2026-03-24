@@ -9,4 +9,7 @@ __pycache__/
 venv
 
 # kbc datafolder
-data
+/data
+
+tests/functional/*/source/data/out/
+tests/functional/*/source/data/in/state.json

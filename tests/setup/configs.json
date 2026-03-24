@@ -1,0 +1,143 @@
+[
+  {
+    "name": "01_vendor_create_success",
+    "description": "Create a new vendor successfully",
+    "config": {
+      "parameters": {
+        "connection": {
+          "tenant_id": "9b85ee6f-4fb0-4a46-8cb7-4dcc6b262a89",
+          "environment": "Production",
+          "company_id": "7ebcd376-7a01-f111-a1fa-6045bdfd931c"
+        },
+        "endpoint": "vendors",
+        "write_mode": "create",
+        "field_mapping": [
+          {"source_column": "Name", "destination_field": "displayName"},
+          {"source_column": "Email", "destination_field": "email"}
+        ]
+      },
+      "authorization": {
+        "oauth_api": {
+          "credentials": {
+            "appKey": "DUMMY_CLIENT_ID",
+            "#appSecret": "DUMMY_CLIENT_SECRET",
+            "#data": "{\"access_token\": \"DUMMY_ACCESS_TOKEN\", \"refresh_token\": \"DUMMY_REFRESH_TOKEN\"}"
+          }
+        }
+      },
+      "storage": {
+        "input": {
+          "tables": [
+            {"destination": "vendors_create.csv"}
+          ]
+        }
+      }
+    }
+  },
+  {
+    "name": "02_vendor_update_success",
+    "description": "Update an existing vendor's displayName by GUID",
+    "config": {
+      "parameters": {
+        "connection": {
+          "tenant_id": "9b85ee6f-4fb0-4a46-8cb7-4dcc6b262a89",
+          "environment": "Production",
+          "company_id": "7ebcd376-7a01-f111-a1fa-6045bdfd931c"
+        },
+        "endpoint": "vendors",
+        "write_mode": "update",
+        "key_field": "id",
+        "field_mapping": [
+          {"source_column": "Name", "destination_field": "displayName"}
+        ]
+      },
+      "authorization": {
+        "oauth_api": {
+          "credentials": {
+            "appKey": "DUMMY_CLIENT_ID",
+            "#appSecret": "DUMMY_CLIENT_SECRET",
+            "#data": "{\"access_token\": \"DUMMY_ACCESS_TOKEN\", \"refresh_token\": \"DUMMY_REFRESH_TOKEN\"}"
+          }
+        }
+      },
+      "storage": {
+        "input": {
+          "tables": [
+            {"destination": "vendors_update.csv"}
+          ]
+        }
+      }
+    }
+  },
+  {
+    "name": "03_vendor_create_conflict",
+    "description": "Attempt to create a vendor with an existing number - component should raise UserException and exit non-zero",
+    "config": {
+      "parameters": {
+        "connection": {
+          "tenant_id": "9b85ee6f-4fb0-4a46-8cb7-4dcc6b262a89",
+          "environment": "Production",
+          "company_id": "7ebcd376-7a01-f111-a1fa-6045bdfd931c"
+        },
+        "endpoint": "vendors",
+        "write_mode": "create",
+        "field_mapping": [
+          {"source_column": "Number", "destination_field": "number"},
+          {"source_column": "Name", "destination_field": "displayName"}
+        ]
+      },
+      "authorization": {
+        "oauth_api": {
+          "credentials": {
+            "appKey": "DUMMY_CLIENT_ID",
+            "#appSecret": "DUMMY_CLIENT_SECRET",
+            "#data": "{\"access_token\": \"DUMMY_ACCESS_TOKEN\", \"refresh_token\": \"DUMMY_REFRESH_TOKEN\"}"
+          }
+        }
+      },
+      "storage": {
+        "input": {
+          "tables": [
+            {"destination": "vendors_conflict.csv"}
+          ]
+        }
+      }
+    }
+  },
+  {
+    "name": "04_vendor_create_continue_on_error",
+    "description": "Create multiple vendors with continue_on_error=true; rows with existing number fail and are written to failed_records.csv",
+    "config": {
+      "parameters": {
+        "connection": {
+          "tenant_id": "9b85ee6f-4fb0-4a46-8cb7-4dcc6b262a89",
+          "environment": "Production",
+          "company_id": "7ebcd376-7a01-f111-a1fa-6045bdfd931c"
+        },
+        "endpoint": "vendors",
+        "write_mode": "create",
+        "continue_on_error": true,
+        "field_mapping": [
+          {"source_column": "Number", "destination_field": "number"},
+          {"source_column": "Name", "destination_field": "displayName"}
+        ]
+      },
+      "authorization": {
+        "oauth_api": {
+          "credentials": {
+            "appKey": "DUMMY_CLIENT_ID",
+            "#appSecret": "DUMMY_CLIENT_SECRET",
+            "#data": "{\"access_token\": \"DUMMY_ACCESS_TOKEN\", \"refresh_token\": \"DUMMY_REFRESH_TOKEN\"}"
+          }
+        }
+      },
+      "storage": {
+        "input": {
+          "tables": [
+            {"destination": "vendors_continue_on_error.csv"}
+          ]
+        }
+      }
+    }
+  }
+]
