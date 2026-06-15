@@ -1,1 +1,1 @@
-Microsoft Dynamics 365 Business Central is an ERP for SMB
+Writes records to Microsoft Dynamics 365 Business Central.
