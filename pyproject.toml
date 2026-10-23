@@ -15,7 +15,7 @@ dev = [
     "freezegun>=1.5.1",
     "keboola-datadirtest>=2.1.0",
     "mock>=5.2.0",
-    "pytest>=9.0.2",
+    "pytest>=9.0.3",
     "ruff>=0.11.5",
 ]
 
